@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPGAVE 12</title>
+    <link rel="stylesheet" href="../styles.css">  <!-- Styles fra andet doc -->
+</head>
+<body>
+    <h1 style="text-align:center">Sandhedstabel</h1>
+    <h3 style="text-align:center; color: #828282;">OPGAVE 7</h3>
+    <h4 style="text-align:center; color: #828282;">KLIK CELLER FOR AT TESTE OFF-DELAY</h3>
+    <div style="display: flex; justify-content: center; align-items: flex-start;">
+<table id="resultsTable">
+    <thead>
+        <tr>
+            <th>Input I1 (TRG)</th>
+            <th>Input I2 (R)</th>
+            <th>Output Q</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td id="input-i1" class="input-cell">0</td>
+            <td id="input-i2" class="input-cell">0</td>
+            <td id="output-q1">0</td>
+        </tr>
+    </tbody>
+</table>
+
+
+    </div>
+    <script src="../basics.js"></script>  <!-- Scripts fra andet doc -->
+    <script>
+function DelayedOutput() {
+    this.isActive = false;  // Current state of output Q
+    this.lastI1 = false;    // To detect negative edge on I1
+    this.timer = null;      // Reference to the timer
+
+    this.calculateOutputs = function(i1, i2) {
+        // Reset has priority, check it first
+        if (i2) {
+            if (this.timer) clearTimeout(this.timer); // Clear any existing timer
+            this.isActive = false; // Reset the output immediately
+            updateOutput();
+            return;
+        }
+
+        // Check for negative edge on I1 (1 to 0 transition)
+        if (this.lastI1 && !i1) {
+            // Only start the timer if it's a negative edge
+            if (this.timer) clearTimeout(this.timer); // Clear previous timer if any
+            this.timer = setTimeout(() => {
+                this.isActive = false; // Turn off after delay
+                updateOutput();
+            }, 2000); // Delay of 2 seconds
+        }
+
+        this.isActive = true; // Set output to true if i1 is high and no reset
+        updateOutput();
+        this.lastI1 = i1; // Update last state for next call
+    };
+}
+
+function updateOutput() {
+    const outputCell = document.getElementById('output-q1');
+    outputCell.textContent = outputSystem.isActive ? '1' : '0';
+}
+
+let outputSystem = new DelayedOutput(); // Create instance of the delay output control
+
+// Setup event listeners for inputs
+document.getElementById('input-i1').addEventListener('click', function () {
+    const newValue = this.textContent === '0' ? '1' : '0'; // Toggle input on click
+    this.textContent = newValue;
+    outputSystem.calculateOutputs(newValue === '1', document.getElementById('input-i2').textContent === '1');
+});
+
+document.getElementById('input-i2').addEventListener('click', function () {
+    const newValue = this.textContent === '0' ? '1' : '0'; // Toggle input on click
+    this.textContent = newValue;
+    outputSystem.calculateOutputs(document.getElementById('input-i1').textContent === '1', newValue === '1');
+});
+    </script>
+</body>
+</html>

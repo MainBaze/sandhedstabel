@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPGAVE 12</title>
+    <link rel="stylesheet" href="../styles.css">  <!-- Styles fra andet doc -->
+</head>
+<body>
+    <h1 style="text-align:center">Sandhedstabel</h1>
+    <h3 style="text-align:center; color: #828282;">OPGAVE 8</h3>
+    <h4 style="text-align:center; color: #828282;">KLIK CELLER FOR AT TESTE ON-DELAY</h3>
+    <div style="display: flex; justify-content: center; align-items: flex-start;">
+<table id="resultsTable">
+    <thead>
+        <tr>
+            <th>Input I1 (TRG)</th>
+            <th>Output Q</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td id="input-i1" class="input-cell">0</td>
+            <td id="output-q1">0</td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+    </div>
+    <script src="../basics.js"></script>  <!-- Scripts fra andet doc -->
+    <script>
+function OnDelayOutput() {
+    this.isActive = false;  // Current state of output Q
+    this.lastI1 = false;    // To detect positive edge on I1
+    this.timer = null;      // Reference to the timer
+
+    this.calculateOutputs = function(i1) {
+        if (i1 && !this.lastI1) { // Check for positive edge (0 to 1 transition)
+            // Start the delay timer to turn on Q after 5 seconds
+            if (this.timer) clearTimeout(this.timer); // Clear previous timer if any
+            this.timer = setTimeout(() => {
+                this.isActive = true; // Turn on after delay
+                updateOutput();
+            }, 3000); // Delay of 3 seconds
+        } else if (!i1) {
+            if (this.timer) clearTimeout(this.timer); // Clear timer if input goes low
+            this.isActive = false; // Output Q is set to false if i1 is low
+            updateOutput();
+        }
+        this.lastI1 = i1; // Update last state for next call
+    };
+}
+
+function updateOutput() {
+    const outputCell = document.getElementById('output-q1');
+    outputCell.textContent = outputSystem.isActive ? '1' : '0';
+}
+
+let outputSystem = new OnDelayOutput(); // Create instance of the on delay output control
+
+// Setup event listener for input I1
+document.getElementById('input-i1').addEventListener('click', function () {
+    const newValue = this.textContent === '0' ? '1' : '0'; // Toggle input on click
+    this.textContent = newValue;
+    outputSystem.calculateOutputs(newValue === '1');
+
+});
+
+    </script>
+</body>
+</html>
