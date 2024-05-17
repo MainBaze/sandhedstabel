@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPGAVE 12</title>
+    <link rel="stylesheet" href="../styles.css">  <!-- Styles fra andet doc -->
+</head>
+<body>
+    <h1 style="text-align:center">Sandhedstabel</h1>
+    <h3 style="text-align:center; color: #828282;">OPGAVE 12</h3>
+    <div style="display: flex; justify-content: center; align-items: flex-start;">
+        <table id="resultsTable">
+            <tbody id="results">
+                <!-- Results will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <script src="../basics.js"></script>  <!-- Scripts fra andet doc -->
+    <script>
+        function calculateOutputs(i1, i2, i3, i22, i23, i24) {
+            const b013 = i22 && i23;
+            const b001 = i24 && i1;
+            const b005 = b013 || b001;
+            const b002 = b005 && i2;
+            const b003 = b005 && i3;
+            const b004 = b003 || b002;
+            const q12 = b004;
+            return q12;
+        }
+		
+
+const config = {
+    inputs: [
+        { id: 'i1', label: 'Input I1' },
+        { id: 'i2', label: 'Input I2' },
+        { id: 'i3', label: 'Input I3' },
+        { id: 'i22', label: 'Input I22' },
+        { id: 'i23', label: 'Input I23' },
+        { id: 'i24', label: 'Input I24' }
+    ],
+    outputs: [
+        { id: 'q12', label: 'Output Q12' }
+    ]
+};
+
+        window.onload = () => displayResults(calculateOutputs, config);
+        document.getElementById('resultsTable').appendChild(createTableHeader());
+    </script>
+</body>
+</html>
